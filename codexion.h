@@ -24,7 +24,6 @@ typedef struct coder
 {
 	int				cid;
 	int				last_comp;
-	int				brn_left;
 	pthread_mutex_t	*dongles;
 }	t_coder;
 
