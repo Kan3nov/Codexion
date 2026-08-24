@@ -1,2 +1,4 @@
+NAME = main.c validation.c
+
 all:
-	@cc *.c -o run -lpthread
+	@cc $(NAME) -o run -lpthread

@@ -12,33 +12,6 @@
 
 #include "codexion.h"
 
-int	validation(int argc, char *argv[])
-{
-	int	i;
-
-	i = 1;
-	if (argc < 9)
-	{
-		printf("One or more arguments are missing\n");
-		return (1);
-	}
-	while (i < argc - 1)
-	{
-		if (!atoi(argv[i]))
-		{
-			printf("Invalid integer value for argument %d\n", i);
-			return (1);
-		}
-		i++;
-	}
-	if (strcmp(argv[8], "fifo") && strcmp(argv[8], "edf"))
-	{
-		printf("Invalid scheduling algorithm\n");
-		return (1);
-	}
-	return (0);
-}
-
 int	main(int argc, char *argv[])
 {
 	int	valid;
@@ -46,5 +19,6 @@ int	main(int argc, char *argv[])
 	valid = validation(argc, argv);
 	if (valid)
 		return (valid);
+	thread_init(argv);
 	return (0);
 }
