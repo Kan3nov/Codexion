@@ -6,32 +6,32 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 11:40:51 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/25 14:59:37 by klafi            ###   ########.fr       */
+/*   Updated: 2026/08/25 16:13:06 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "../headers/codexion.h"
 
-int compile(t_coder *coder)
+int compile(t_coder *coder, t_queue *queues)
 {
 	t_queue	q1;
 	t_queue	q2;
 
-	q1 = coder->queues[coder->cid];
-	q2 = coder->queues[(coder->cid + 1) % atoi(coder->argv[1])];
-	pthread_mutex_lock(&(coder->dongles[coder->cid]));
+	q1 = queues[coder->cid];
+	q2 = queues[(coder->cid + 1) % atoi(coder->argv[1])];
 	while (1)
 	{
-		if (top(q1) == coder->cid && top(q2) == coder->cid)
+		if (top(&q1) == coder->cid && top(&q2) == coder->cid)
 		{
+			pthread_mutex_lock(&(coder->dongles[coder->cid]));
 			//poll(q1)
 			//poll(q2)
+			pthread_mutex_unlock(&(coder->dongles[coder->cid]));
 		}
 		else
 			insert(q1, coder);
 			// pthread_cond_wait()
-		pthread_mutex_unlock(&(coder->dongles[coder->cid]));
 	}
 	return (0);
 }

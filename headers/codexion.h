@@ -18,17 +18,11 @@
 #include <sys/time.h>
 #include <time.h>
 
-int	validation(int argc, char *argv[]);
-int thread_init(char *argv[]);
-void insert(t_queue *q, t_coder *elem);
-
-
 typedef struct coder
 {
 	int				cid;
 	int				last_comp;
 	int				arv_time;
-	t_queue			*queues;
 	char			**argv;
 	pthread_mutex_t	*dongles;
 }	t_coder;
@@ -45,3 +39,8 @@ typedef struct queue
 	int		len;
 	int		limit;
 }	t_queue;
+
+int	validation(int argc, char *argv[]);
+int thread_init(char *argv[]);
+void insert(t_queue *q, t_coder *elem);
+int top(t_queue *q);

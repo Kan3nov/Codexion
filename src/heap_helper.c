@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/25 12:00:08 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/25 14:25:48 by klafi            ###   ########.fr       */
+/*   Updated: 2026/08/25 16:11:35 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,10 @@ int right_c(int parent)
 	return parent * 2  + 2;
 }
 
-int main(void)
+int top(t_queue *q)
 {
-	float x;
-	x = 5/3;
-	printf("%.2f\n", 5.3/3);
+	if (q->len != 0)
+		return q->array[0]->cid;
+	else
+		return -1;
 }

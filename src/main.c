@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "../headers/codexion.h"
-
+/*
 int	main(int argc, char *argv[])
 {
 	int	valid;
@@ -22,3 +22,4 @@ int	main(int argc, char *argv[])
 	thread_init(argv);
 	return (0);
 }
+*/
