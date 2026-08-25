@@ -20,7 +20,7 @@
 
 int	validation(int argc, char *argv[]);
 int thread_init(char *argv[]);
-
+void insert(t_queue *q, t_coder *elem);
 
 
 typedef struct coder
@@ -28,6 +28,7 @@ typedef struct coder
 	int				cid;
 	int				last_comp;
 	int				arv_time;
+	t_queue			*queues;
 	char			**argv;
 	pthread_mutex_t	*dongles;
 }	t_coder;
@@ -40,7 +41,6 @@ typedef struct timeval
 
 typedef struct queue
 {
-	int		qid;
 	t_coder	**array;
 	int		len;
 	int		limit;
