@@ -19,11 +19,16 @@
 #include <time.h>
 
 int	validation(int argc, char *argv[]);
+int thread_init(char *argv[]);
+
+
 
 typedef struct coder
 {
 	int				cid;
 	int				last_comp;
+	int				arv_time;
+	char			**argv;
 	pthread_mutex_t	*dongles;
 }	t_coder;
 
@@ -32,3 +37,11 @@ typedef struct timeval
 	time_t		tv_sec; /* seconds */
 	suseconds_t	tv_usec; /* microseconds */
 }	t_time;
+
+typedef struct queue
+{
+	int		qid;
+	t_coder	**array;
+	int		len;
+	int		limit;
+}	t_queue;
