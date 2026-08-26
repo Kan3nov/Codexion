@@ -23,6 +23,8 @@ typedef struct coder
 	int				cid;
 	size_t			last_comp;
 	size_t			arv_time;
+	size_t			start_time;
+	int				comp_num;
 	char			**argv;
 	pthread_mutex_t	*dongles;
 }	t_coder;
@@ -42,8 +44,10 @@ typedef struct queue
 
 typedef struct arg
 {
-	t_queue	*queues;
-	t_coder *coder;
+	t_queue			*queues;
+	t_coder 		*coder;
+	pthread_mutex_t	*q_locks;
+	pthread_mutex_t	*output;
 }	t_arg;
 
 int	validation(int argc, char *argv[]);

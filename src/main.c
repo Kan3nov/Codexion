@@ -22,8 +22,8 @@ int	main(int argc, char *argv[])
 	valid = validation(argc, argv);
 	if (valid)
 		return (valid);
-//	thread_init(argv);
-
+	thread_init(argv);
+	// testing ==========================================
 	c1 = malloc(sizeof(t_coder));
 	c2 = malloc(sizeof(t_coder));
 	q1 = malloc(sizeof(t_queue));

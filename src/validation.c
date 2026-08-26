@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 11:41:01 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/25 13:41:20 by klafi            ###   ########.fr       */
+/*   Updated: 2026/08/26 16:11:39 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	validation(int argc, char *argv[])
 	}
 	while (i < argc - 1)
 	{
-		if (!atoi(argv[i]))
+		if (atoi(argv[i]) <= 0)
 		{
 			printf("Invalid integer value for argument %d\n", i);
 			return (1);
