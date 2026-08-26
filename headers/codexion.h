@@ -40,6 +40,12 @@ typedef struct queue
 	int		limit;
 }	t_queue;
 
+typedef struct arg
+{
+	t_queue	*queues;
+	t_coder *coder;
+}	t_arg;
+
 int	validation(int argc, char *argv[]);
 int thread_init(char *argv[]);
 void insert(t_queue *q, t_coder *elem);

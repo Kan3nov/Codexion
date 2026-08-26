@@ -6,18 +6,22 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 11:40:51 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/25 16:13:06 by klafi            ###   ########.fr       */
+/*   Updated: 2026/08/26 12:15:50 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "../headers/codexion.h"
 
-int compile(t_coder *coder, t_queue *queues)
+void	*compile(void *arg)
 {
 	t_queue	q1;
 	t_queue	q2;
+	t_queue *queues;
+	t_coder	*coder;
 
+	queues = ((t_arg *) arg)->queues;
+	coder = ((t_arg *) arg)->coder;
 	q1 = queues[coder->cid];
 	q2 = queues[(coder->cid + 1) % atoi(coder->argv[1])];
 	while (1)
@@ -30,13 +34,13 @@ int compile(t_coder *coder, t_queue *queues)
 			pthread_mutex_unlock(&(coder->dongles[coder->cid]));
 		}
 		else
-			insert(q1, coder);
+			insert(&q1, coder);
 			// pthread_cond_wait()
 	}
-	return (0);
+	return ((void*) NULL);
 }
 
-void coders_init(char *argv[], pthread_mutex_t *dongles, pthread_t *coders,
+int	coders_init(char *argv[], pthread_mutex_t *dongles, pthread_t *coders,
 				t_queue *queues)
 {
 	int				i;
@@ -45,16 +49,16 @@ void coders_init(char *argv[], pthread_mutex_t *dongles, pthread_t *coders,
 
 	i = 0;
 	gettimeofday(&t, NULL);
-	while(i < (int) argv[1])
+	while(i < (int) atoi(argv[1]))
 		c = malloc(sizeof(t_coder));
 		c->argv = argv;
 		c->cid = i;
 		c->dongles = dongles;
 		c->last_comp = t.tv_sec * 1000 + t.tv_usec / 1000;
-		c->queues = queues;
 		if (pthread_create(&coders[i], NULL, &compile, c) != 0)
 			return (1);
 		i++;
+	return (0);
 }
 
 int thread_init(char *argv[])

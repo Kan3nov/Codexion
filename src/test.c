@@ -1,5 +1,5 @@
 #include "../headers/codexion.h"
-
+/*
 int main(void)
 {
 	t_time time1;
@@ -12,3 +12,4 @@ int main(void)
 	printf("seconds: %d, microseconds:  %d\n", time2.tv_sec, time2.tv_usec);
 	return(0);
 }
+*/
