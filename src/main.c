@@ -30,20 +30,24 @@ int	main(int argc, char *argv[])
 	q1->array = malloc(sizeof(t_coder) * 2);
 	q1->len = 0;
 	q1->limit= 2;
-
+	for (int i = 0; i < 2; i++)
+	{
+		q1->array[i] = NULL;
+	}
 	c1->cid = 0;
 	gettimeofday(&time, NULL);
-	c1->last_comp = time.tv_sec * 1000  + time.tv_usec / 1000;
+	c1->last_comp = (size_t) time.tv_sec * 1000000  + time.tv_usec;
 	c2->cid = 1;
 	gettimeofday(&time, NULL);
-	c2->last_comp = time.tv_sec * 1000  + time.tv_usec / 1000;
+	c2->last_comp = (size_t) time.tv_sec * 1000000  + time.tv_usec;
+	c1->argv = argv;
+	c2->argv = argv;
 	insert(q1, c1);
 	insert(q1, c2);
 	for (int i = 0; i < 2; i++)
 	{
 		printf("%d\n", q1->array[i]->cid);
 	}
-
-
+	
 	return (0);
 }

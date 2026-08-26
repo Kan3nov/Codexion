@@ -21,8 +21,8 @@
 typedef struct coder
 {
 	int				cid;
-	int				last_comp;
-	int				arv_time;
+	size_t			last_comp;
+	size_t			arv_time;
 	char			**argv;
 	pthread_mutex_t	*dongles;
 }	t_coder;
