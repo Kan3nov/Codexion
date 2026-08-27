@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 11:41:01 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/26 16:11:39 by klafi            ###   ########.fr       */
+/*   Updated: 2026/08/27 12:50:01 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,5 +36,6 @@ int	validation(int argc, char *argv[])
 		printf("Invalid scheduling algorithm\n");
 		return (1);
 	}
+	printf("validation success !\n");
 	return (0);
 }

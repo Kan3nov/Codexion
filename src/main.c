@@ -19,10 +19,28 @@ int	main(int argc, char *argv[])
 	t_queue *q1;
 	t_time time;
 
+	if (argc == 1)
+	{
+		argc = 9;
+		argv = malloc(sizeof(char *) * 9);
+		argv[0] = "meow"; // file name
+		argv[1] = "4";  //coders number
+		argv[2] = "600";  //time to burnout
+		argv[3] = "100";  //time to compile
+		argv[4] = "150";  //time to debug
+		argv[5] = "200";  //time to refactor
+		argv[6] = "3";  //number of compiles required
+		argv[7] = "50";  //dongle cooldown
+		argv[8] = "fifo";  //scheduling algorithm
+
+	}
 	valid = validation(argc, argv);
 	if (valid)
 		return (valid);
 	thread_init(argv);
+	return (0);
+}
+/*
 	// testing ==========================================
 	c1 = malloc(sizeof(t_coder));
 	c2 = malloc(sizeof(t_coder));
@@ -38,16 +56,21 @@ int	main(int argc, char *argv[])
 	gettimeofday(&time, NULL);
 	c1->last_comp = (size_t) time.tv_sec * 1000000  + time.tv_usec;
 	c2->cid = 1;
-	gettimeofday(&time, NULL);
-	c2->last_comp = (size_t) time.tv_sec * 1000000  + time.tv_usec;
 	c1->argv = argv;
 	c2->argv = argv;
+	gettimeofday(&time, NULL);
+	c2->last_comp = (size_t) time.tv_sec * 1000000  + time.tv_usec;
 	insert(q1, c1);
 	insert(q1, c2);
+	printf("inserting: \n");
 	for (int i = 0; i < 2; i++)
-	{
 		printf("%d\n", q1->array[i]->cid);
-	}
-	
-	return (0);
-}
+	printf("polling: \n");
+	for (int i = 0; i < 2; i++)
+		printf("%d\n", poll(q1)->cid);
+	insert(q1, c2);
+	insert(q1, c1);
+	printf("inserting in reverse order then polling : \n");
+	for (int i = 0; i < 2; i++)
+		printf("%d\n", poll(q1)->cid);
+*/

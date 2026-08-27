@@ -26,7 +26,6 @@ typedef struct coder
 	size_t			start_time;
 	int				comp_num;
 	char			**argv;
-	pthread_mutex_t	*dongles;
 }	t_coder;
 
 typedef struct timeval
@@ -44,13 +43,16 @@ typedef struct queue
 
 typedef struct arg
 {
+	char			**argv;
+	pthread_mutex_t	*dongles;
 	t_queue			*queues;
-	t_coder 		*coder;
 	pthread_mutex_t	*q_locks;
 	pthread_mutex_t	*output;
+	t_coder			*coder;
 }	t_arg;
 
 int	validation(int argc, char *argv[]);
 int thread_init(char *argv[]);
 void insert(t_queue *q, t_coder *elem);
 int top(t_queue *q);
+t_coder	*poll(t_queue *q);

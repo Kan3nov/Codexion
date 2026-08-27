@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 14:07:04 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/26 14:04:44 by klafi            ###   ########.fr       */
+/*   Updated: 2026/08/27 12:40:34 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,10 @@ void insert(t_queue *q, t_coder *elem)
 	if (q->len == q->limit)
 		return (printf("Error, inserting an element when queue is full"),
 			(void) 0);
+	current = 0;
+	while (current < q->len)
+		if (q->array[current++]->cid == elem->cid)
+			return ;
 	current = q->len;
 	q->array[current] = elem;
 	gettimeofday(&time, NULL);
@@ -46,17 +50,44 @@ void insert(t_queue *q, t_coder *elem)
 	q->len++;
 }
 
-void build_heap(void *array)
+void	heapify_down(t_queue *q, int current)
 {
-	
+	int		left;
+	int		right;
+	int		smallest;
+	t_coder *temp;
+
+	smallest = current;
+	while (1)
+	{
+		left = left_c(smallest);
+		right = right_c(smallest);
+		if (left < q->len && pr(q->array[left]) < pr(q->array[current]))
+			smallest = left;
+		if (right < q->len && pr(q->array[right]) < pr(q->array[current]))
+			smallest = right;
+		if (smallest != current)
+		{
+			temp = q->array[current];
+			q->array[current] = q->array[smallest];
+			q->array[smallest] = temp;
+			current = smallest;
+		}
+		else
+			break;
+	}
 }
 
-void heapify(void *array, int idx)
+t_coder	*poll(t_queue *q)
 {
-	
-}
+	t_coder	*result;
+	int		current;
 
-void *pop(t_queue *q)
-{
-	
+	if (q->len == 0)
+		return (NULL);
+	result = q->array[0];
+	q->array[0] = q->array[q->len - 1];
+	q->array[q->len-- - 1] = NULL;
+	heapify_down(q, 0);
+	return result;
 }
