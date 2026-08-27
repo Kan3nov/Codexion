@@ -49,6 +49,7 @@ typedef struct arg
 	pthread_mutex_t	*q_locks;
 	pthread_mutex_t	*output;
 	t_coder			*coder;
+	t_coder			**coders;
 }	t_arg;
 
 int	validation(int argc, char *argv[]);

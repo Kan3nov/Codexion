@@ -6,11 +6,24 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 11:40:51 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/27 14:12:09 by klafi            ###   ########.fr       */
+/*   Updated: 2026/08/27 15:58:17 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/codexion.h"
+
+void print_state(char *state, t_arg *g_env, t_coder *c)
+{
+	t_time	now;
+	size_t	time;
+
+	gettimeofday(&now, NULL);
+	time = (size_t) now.tv_sec * 1000000 + now.tv_usec;
+	time = time - c->start_time;
+	pthread_mutex_lock(g_env->output);
+	printf("%d %d %s\n", (int) (time / 1000), c->cid, state);
+	pthread_mutex_unlock(g_env->output);
+}
 
 void	debug_and_refactor(t_coder *coder, pthread_mutex_t *output,
 							t_arg *g_env)
@@ -20,20 +33,10 @@ void	debug_and_refactor(t_coder *coder, pthread_mutex_t *output,
 	int		debug_time;
 	int		refactor_time;
 
-	gettimeofday(&now, NULL);
-	time = (size_t) now.tv_sec * 1000000 + now.tv_usec;
-	time = time - coder->start_time;
-	pthread_mutex_lock(output);
-	printf("%d %d is debugging\n", (int) (time / 1000), coder->cid);
-	pthread_mutex_unlock(output);
+	print_state("is debugging", g_env, coder);
 	debug_time = atoi(g_env->argv[4]);
 	usleep(debug_time * 1000);
-	gettimeofday(&now, NULL);
-	time = (size_t) now.tv_sec * 1000000 + now.tv_usec;
-	time = time - coder->start_time;
-	pthread_mutex_lock(output);
-	printf("%d %d is refactoring\n", (int) (time / 1000), coder->cid);
-	pthread_mutex_unlock(output);
+	print_state("is refactoring", g_env, coder);
 	refactor_time = atoi(g_env->argv[5]);
 	usleep(refactor_time * 1000);
 }
@@ -48,20 +51,17 @@ void poll_queues(int q1, int q2, pthread_mutex_t *q_locks, t_queue *queues)
 	pthread_mutex_unlock(&q_locks[q2]);
 }
 
+
 void	*compile(t_coder *coder, t_arg *g_env, int q1, int q2)
 {
 	t_time	now;
-	size_t	time;
 	int		compile_time;
 
 	pthread_mutex_lock(&(g_env->dongles[q1]));
+	print_state("has taken a dongle", g_env, coder);
 	pthread_mutex_lock(&(g_env->dongles[q2]));
-	gettimeofday(&now, NULL);
-	time = (size_t) now.tv_sec * 1000000 + now.tv_usec;
-	time = time - coder->start_time;
-	pthread_mutex_lock(g_env->output);
-	printf("%d %d is compiling\n", (int) (time / 1000), coder->cid);
-	pthread_mutex_unlock(g_env->output);
+	print_state("has taken a dongle", g_env, coder);
+	print_state("is compiling", g_env, coder);
 	compile_time = atoi(g_env->argv[3]);
 	usleep(compile_time * 1000);
 	poll_queues(q1, q2, g_env->q_locks, g_env->queues);
@@ -70,6 +70,8 @@ void	*compile(t_coder *coder, t_arg *g_env, int q1, int q2)
 	coder->comp_num++;
 	pthread_mutex_unlock(&(g_env->dongles[q1]));
 	pthread_mutex_unlock(&(g_env->dongles[q2]));
+	gettimeofday(&now, NULL);
+	coder->last_comp = (size_t) now.tv_sec * 1000000 + now.tv_usec;
 	debug_and_refactor(coder, g_env->output, g_env);
 }
 
@@ -111,27 +113,66 @@ void	*code(void *arg)
 	return ((void*) NULL);
 }
 
-int	coders_init(t_arg *g_env, pthread_t *coders)
+void	*monitor(void *arg)
+{
+	t_arg	*g_env;
+	t_time	time;
+	size_t	now;
+	int		i;
+	size_t	burn_time;
+
+	g_env = (t_arg *) arg;
+	while(1)
+	{
+		i = 0;
+		gettimeofday(&time, NULL);
+		now = (size_t) time.tv_sec * 1000000 + time.tv_usec;
+		while (i < atoi(g_env->argv[1]))
+		{
+			burn_time = atoi(g_env->argv[2]) * 1000;
+			if (g_env->coders[i]->last_comp + burn_time < now)
+			{
+				print_state("burned out", g_env, g_env->coders[i]);
+				exit(0);
+			}
+			i++;
+		}
+	}
+}
+
+void monitor_init(t_arg *g_env)
+{
+	pthread_t	monitor_th;
+	
+	pthread_create(&monitor_th, NULL, &monitor, (void *) g_env);
+
+}
+
+int	coders_init(t_arg *g_env, pthread_t *coders_th)
 {
 	int				i;
 	t_coder			*c;
+	t_coder			**coders;
 	t_time			t;
 
 	i = 0;
 	gettimeofday(&t, NULL);
+	coders = malloc(sizeof(t_coder *) * atoi(g_env->argv[1]));
+	g_env->coders = coders;
 	while(i < (int) atoi(g_env->argv[1]))
 	{
 		c = malloc(sizeof(t_coder));
 		c->cid = i;
-		c->last_comp = (size_t) t.tv_sec * 1000000 + t.tv_usec;
+		c->last_comp = ((size_t) t.tv_sec) * 1000000 + t.tv_usec;
 		c->comp_num = 0;
 		c->start_time = c->last_comp;
 		c->argv = g_env->argv;
+		coders[i] = c;
 		g_env->coder = c;
-		if (pthread_create(&coders[i], NULL, &code, g_env) != 0)
+		if (pthread_create(&coders_th[i++], NULL, &code, g_env) != 0)
 			return (1);
-		i++;
 	}
+	monitor_init(g_env);
 	return (0);
 }
 
