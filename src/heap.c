@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 14:07:04 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/27 12:40:34 by klafi            ###   ########.fr       */
+/*   Updated: 2026/08/27 14:12:51 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,7 @@ void insert(t_queue *q, t_coder *elem)
 	t_time 	time;
 
 	if (q->len == q->limit)
-		return (printf("Error, inserting an element when queue is full"),
-			(void) 0);
+		return ((void) 0);
 	current = 0;
 	while (current < q->len)
 		if (q->array[current++]->cid == elem->cid)
