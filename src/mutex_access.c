@@ -18,13 +18,16 @@ void print_state(char *state, t_arg *g_env, t_coder *c)
 	size_t	time;
 	static int	stop = 0;
 
-	if (stop == 1)
-		return ;
 	gettimeofday(&now, NULL);
 	time = (size_t) now.tv_sec * 1000000 + now.tv_usec;
 	if (c)
 		time = time - c->start_time;
 	pthread_mutex_lock(g_env->output);
+	if (stop == 1)
+	{
+		pthread_mutex_unlock(g_env->output);
+		return ;
+	}
 	if (!c)
 	{
 		stop = 1;

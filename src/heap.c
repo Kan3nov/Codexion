@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heap.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
+/*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 14:07:04 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/27 14:12:51 by klafi            ###   ########.fr       */
+/*   Updated: 2026/08/28 22:47:18 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ size_t	pr(t_coder *coder)
 		return -1;
 	if (strcmp(coder->argv[8], "edf") == 0)
 		return (coder->last_comp + atoi(coder->argv[2]) * 1000);
-	else if (strcmp(coder->argv[8], "fifo") == 0)
+	else
 		return (coder->arv_time);
 }
 
@@ -80,7 +80,6 @@ void	heapify_down(t_queue *q, int current)
 t_coder	*poll(t_queue *q)
 {
 	t_coder	*result;
-	int		current;
 
 	if (q->len == 0)
 		return (NULL);

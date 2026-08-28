@@ -2,11 +2,8 @@
 #include "../headers/codexion.h"
 
 
-void	debug_and_refactor(t_coder *coder, pthread_mutex_t *output,
-							t_arg *g_env)
+void	debug_and_refactor(t_coder *coder, t_arg *g_env)
 {
-	size_t	time;
-	t_time	now;
 	int		debug_time;
 	int		refactor_time;
 
@@ -38,7 +35,8 @@ void	*compile(t_coder *coder, t_arg *g_env, int q1, int q2)
 	coder->last_comp = ((size_t) now.tv_sec) * 1000000 + now.tv_usec;
 	g_env->don_cd[q1] = coder->last_comp + atoi(coder->argv[7]) * 1000;
 	g_env->don_cd[q2] = g_env->don_cd[q1];
-	debug_and_refactor(coder, g_env->output, g_env);
+	debug_and_refactor(coder, g_env);
+	return (NULL);
 }
 
 void	*code(void *arg)
@@ -49,7 +47,6 @@ void	*code(void *arg)
 	t_coder			*coder;
 	pthread_mutex_t	*q_locks;
 	t_time			time;
-	t_code_arg		*c_arg;
 	t_arg			*g_env;
 	size_t			now;
 	

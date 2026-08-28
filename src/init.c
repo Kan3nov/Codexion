@@ -1,23 +1,19 @@
 
 #include "../headers/codexion.h"
 
-int	coders_init(t_arg *g_env, pthread_t *coders_th)
+int	coders_init(int coder_num, t_arg *g_env, t_coder **coders)
 {
-	int				i;
+	int	i;
 	t_coder			*c;
-	t_coder			**coders;
-	int				coder_num;
 	t_time			t;
-	t_code_arg		*c_arg;
 
-	gettimeofday(&t, NULL);
-	coders = malloc(sizeof(t_coder *) * atoi(g_env->argv[1]));
-	coder_num = atoi(g_env->argv[1]);
-	g_env->coders = coders;
 	i = 0;
+	gettimeofday(&t, NULL);
 	while(i < coder_num)
 	{
 		c = malloc(sizeof(t_coder));
+		if (!c)
+			return (1);
 		c->cid = i;
 		c->last_comp = ((size_t) t.tv_sec) * 1000000 + t.tv_usec;
 		c->comp_num = 0;
@@ -25,6 +21,19 @@ int	coders_init(t_arg *g_env, pthread_t *coders_th)
 		c->argv = g_env->argv;
 		coders[i++] = c;
 	}
+	return (0);
+}
+int	coders_start(t_arg *g_env, pthread_t *coders_th)
+{
+	int				i;
+	t_coder			**coders;
+	int				coder_num;
+	t_code_arg		*c_arg;
+
+	coders = malloc(sizeof(t_coder *) * atoi(g_env->argv[1]));
+	coder_num = atoi(g_env->argv[1]);
+	coders_init(coder_num, g_env, coders);
+	g_env->coders = coders;
 	i = 0;
 	while(i < coder_num)
 	{
@@ -86,7 +95,7 @@ void	glob_env_init(char **argv, t_arg **g_env, int coder_num, t_queue *queues)
 int thread_init(char *argv[])
 {
 	int				coder_num;
-	pthread_t 		*coders;
+	pthread_t 		*coders_th;
 	t_queue			*queues;
 	t_arg			*g_env;
 	pthread_t		monitor;
@@ -94,10 +103,12 @@ int thread_init(char *argv[])
 	coder_num = atoi(argv[1]);
 	queues_init(&queues, coder_num);
 	glob_env_init(argv, &g_env, coder_num, queues);
-	coders = malloc(sizeof(pthread_t) * coder_num);
-	coders_init(g_env, coders);
+	coders_th = malloc(sizeof(pthread_t) * coder_num);
+	coders_start(g_env, coders_th);
 	monitor_init(g_env, &monitor);
 	pthread_join(monitor, NULL);
+	//free_all(g_env);
+	return (0);
 }
 
 void monitor_init(t_arg *g_env, pthread_t *monitor_th)

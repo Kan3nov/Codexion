@@ -16,10 +16,10 @@
 int	main(int argc, char *argv[])
 {
 	int	valid;
-	t_coder *c1;
-	t_coder *c2;
-	t_queue *q1;
-	t_time time;
+	//t_coder *c1;
+	//t_coder *c2;
+	//t_queue *q1;
+	//t_time time;
 
 	if (argc == 1)
 	{
