@@ -10,6 +10,8 @@
 /*																			*/
 /* ************************************************************************** */
 
+
+// dongle cooldown, number of philosophers, freeing mallocs
 #include "../headers/codexion.h"
 int	main(int argc, char *argv[])
 {
@@ -29,7 +31,7 @@ int	main(int argc, char *argv[])
 		argv[3] = "100";  //time to compile
 		argv[4] = "150";  //time to debug
 		argv[5] = "200";  //time to refactor
-		argv[6] = "3";  //number of compiles required
+		argv[6] = "1";  //number of compiles required
 		argv[7] = "50";  //dongle cooldown
 		argv[8] = "fifo";  //scheduling algorithm
 
