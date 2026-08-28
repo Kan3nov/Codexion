@@ -48,9 +48,15 @@ typedef struct arg
 	t_queue			*queues;
 	pthread_mutex_t	*q_locks;
 	pthread_mutex_t	*output;
-	t_coder			*coder;
 	t_coder			**coders;
+	size_t			*don_cd;
 }	t_arg;
+
+typedef struct code_arg
+{
+	t_arg	*g_env;
+	t_coder	*coder;
+}	t_code_arg;
 
 int	validation(int argc, char *argv[]);
 int thread_init(char *argv[]);
@@ -67,3 +73,7 @@ int thread_init(char *argv[]);
 
 void	*code(void *arg);
 void	*monitor(void *arg);
+
+void poll_queues(int q1, int q2, pthread_mutex_t *q_locks, t_queue *queues);
+void	insert_queue(t_coder *coder, pthread_mutex_t *q_locks, t_queue *queues, int q);
+void print_state(char *state, t_arg *g_env, t_coder *c);

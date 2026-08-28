@@ -29,9 +29,9 @@ int	main(int argc, char *argv[])
 		argv[1] = "4";  //coders number
 		argv[2] = "1000";  //time to burnout
 		argv[3] = "100";  //time to compile
-		argv[4] = "150";  //time to debug
-		argv[5] = "200";  //time to refactor
-		argv[6] = "1";  //number of compiles required
+		argv[4] = "100";  //time to debug
+		argv[5] = "100";  //time to refactor
+		argv[6] = "4";  //number of compiles required
 		argv[7] = "50";  //dongle cooldown
 		argv[8] = "fifo";  //scheduling algorithm
 

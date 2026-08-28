@@ -1,29 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   coders.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/08/24 11:40:51 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/28 09:32:01 by klafi            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "../headers/codexion.h"
 
-void print_state(char *state, t_arg *g_env, t_coder *c)
-{
-	t_time	now;
-	size_t	time;
-
-	gettimeofday(&now, NULL);
-	time = (size_t) now.tv_sec * 1000000 + now.tv_usec;
-	time = time - c->start_time;
-	pthread_mutex_lock(g_env->output);
-	printf("%d %d %s\n", (int) (time / 1000), c->cid, state);
-	pthread_mutex_unlock(g_env->output);
-}
 
 void	debug_and_refactor(t_coder *coder, pthread_mutex_t *output,
 							t_arg *g_env)
@@ -41,17 +18,6 @@ void	debug_and_refactor(t_coder *coder, pthread_mutex_t *output,
 	usleep(refactor_time * 1000);
 }
 
-void poll_queues(int q1, int q2, pthread_mutex_t *q_locks, t_queue *queues)
-{
-	pthread_mutex_lock(&q_locks[q1]);
-	poll(&queues[q1]);
-	pthread_mutex_unlock(&q_locks[q1]);
-	pthread_mutex_lock(&q_locks[q2]);
-	poll(&queues[q2]);
-	pthread_mutex_unlock(&q_locks[q2]);
-}
-
-
 void	*compile(t_coder *coder, t_arg *g_env, int q1, int q2)
 {
 	t_time	now;
@@ -65,13 +31,13 @@ void	*compile(t_coder *coder, t_arg *g_env, int q1, int q2)
 	compile_time = atoi(g_env->argv[3]);
 	usleep(compile_time * 1000);
 	poll_queues(q1, q2, g_env->q_locks, g_env->queues);
-	// gettimeofday(&now, NULL);
-	// *dongle_cooldown = now.tv_sec * 1000000 + time.tv_usec + coder->argv[7] * 1000
 	coder->comp_num++;
 	pthread_mutex_unlock(&(g_env->dongles[q1]));
 	pthread_mutex_unlock(&(g_env->dongles[q2]));
 	gettimeofday(&now, NULL);
-	coder->last_comp = (size_t) now.tv_sec * 1000000 + now.tv_usec;
+	coder->last_comp = ((size_t) now.tv_sec) * 1000000 + now.tv_usec;
+	g_env->don_cd[q1] = coder->last_comp + atoi(coder->argv[7]) * 1000;
+	g_env->don_cd[q2] = g_env->don_cd[q1];
 	debug_and_refactor(coder, g_env->output, g_env);
 }
 
@@ -82,33 +48,34 @@ void	*code(void *arg)
 	t_queue 		*queues;
 	t_coder			*coder;
 	pthread_mutex_t	*q_locks;
+	t_time			time;
+	t_code_arg		*c_arg;
+	t_arg			*g_env;
+	size_t			now;
+	
 
-	queues = ((t_arg *) arg)->queues;
-	coder = ((t_arg *) arg)->coder;
-	q_locks = ((t_arg *) arg)->q_locks;
+	g_env = ((t_code_arg *) arg)->g_env;
+	coder = ((t_code_arg *) arg)->coder;
+	printf("coder cid : %d\n", coder->cid);
+	queues = g_env->queues;
+	q_locks = g_env->q_locks;
 	q1 = coder->cid;
-	q2 = (coder->cid + 1) % atoi(((t_arg *) arg)->argv[1]);
+	q2 = (coder->cid + 1) % atoi(g_env->argv[1]);
 	while (1)
 	{
 		// if (num_reserved == num_coders - 1);
 		// 		continue;
+		gettimeofday(&time, NULL);
+		now = ((size_t) time.tv_sec) * 1000000 + time.tv_usec;
 		if (top(&queues[q1]) == coder->cid)
 		{
-			if (top(&queues[q2]) == coder->cid) // *now > *dongle_cooldown
-				compile(coder, ((t_arg *) arg), q1, q2);
+			if (top(&queues[q2]) == coder->cid && now > g_env->don_cd[q1] && now > g_env->don_cd[q2])
+				compile(coder, g_env, q1, q2);
 			else
-			{
-				pthread_mutex_lock(&q_locks[q2]);
-				insert(&queues[q2], coder);
-				pthread_mutex_unlock(&q_locks[q2]);
-			}
+				insert_queue(coder, q_locks, queues, q2);
 		}
 		else
-		{
-			pthread_mutex_lock(&q_locks[q1]);
-			insert(&queues[q1], coder);
-			pthread_mutex_unlock(&q_locks[q1]);
-		}
+			insert_queue(coder, q_locks, queues, q1);
 	}
 	return ((void*) NULL);
 }

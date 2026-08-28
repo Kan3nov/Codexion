@@ -6,23 +6,33 @@ int	coders_init(t_arg *g_env, pthread_t *coders_th)
 	int				i;
 	t_coder			*c;
 	t_coder			**coders;
+	int				coder_num;
 	t_time			t;
+	t_code_arg		*c_arg;
 
-	i = 0;
 	gettimeofday(&t, NULL);
 	coders = malloc(sizeof(t_coder *) * atoi(g_env->argv[1]));
+	coder_num = atoi(g_env->argv[1]);
 	g_env->coders = coders;
-	while(i < (int) atoi(g_env->argv[1]))
+	i = 0;
+	while(i < coder_num)
 	{
+		printf("meow1\n");
 		c = malloc(sizeof(t_coder));
 		c->cid = i;
 		c->last_comp = ((size_t) t.tv_sec) * 1000000 + t.tv_usec;
 		c->comp_num = 0;
 		c->start_time = c->last_comp;
 		c->argv = g_env->argv;
-		coders[i] = c;
-		g_env->coder = c;
-		if (pthread_create(&coders_th[i++], NULL, &code, g_env) != 0)
+		coders[i++] = c;
+	}
+	i = 0;
+	while(i < coder_num)
+	{
+		c_arg = malloc(sizeof(t_code_arg));
+		c_arg->coder = coders[i];
+		c_arg->g_env = g_env;
+		if (pthread_create(&coders_th[i++], NULL, &code, c_arg) != 0)
 			return (1);
 	}
 	return (0);
@@ -50,26 +60,29 @@ void	glob_env_init(char **argv, t_arg **g_env, int coder_num, t_queue *queues)
 	pthread_mutex_t *dongles;
 	pthread_mutex_t *q_locks;
 	pthread_mutex_t *output;
+	size_t			*dongles_cooldown;
 	int				i;
 
 	*g_env = malloc(sizeof(t_arg));
 	dongles = malloc(sizeof(pthread_mutex_t) * coder_num);
 	q_locks = malloc(sizeof(pthread_mutex_t) * coder_num);
 	output =  malloc(sizeof(pthread_mutex_t));
+	dongles_cooldown = malloc(sizeof(size_t) * coder_num);
 	pthread_mutex_init(output, NULL);
 	i = 0;
 	while(i < coder_num)
 	{
 		pthread_mutex_init(&dongles[i], NULL);
 		pthread_mutex_init(&q_locks[i], NULL);
-		i++;
+		dongles_cooldown[i++] = 0;
 	}
 	(*g_env)->argv = argv;
 	(*g_env)->dongles = dongles;
 	(*g_env)->output = output;
 	(*g_env)->q_locks = q_locks;
 	(*g_env)->queues = queues;
-}
+	(*g_env)->don_cd = dongles_cooldown;
+}		
 
 int thread_init(char *argv[])
 {
