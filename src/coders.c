@@ -56,7 +56,6 @@ void	*code(void *arg)
 
 	g_env = ((t_code_arg *) arg)->g_env;
 	coder = ((t_code_arg *) arg)->coder;
-	printf("coder cid : %d\n", coder->cid);
 	queues = g_env->queues;
 	q_locks = g_env->q_locks;
 	q1 = coder->cid;

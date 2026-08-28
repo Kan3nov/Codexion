@@ -33,7 +33,7 @@ int	main(int argc, char *argv[])
 		argv[5] = "100";  //time to refactor
 		argv[6] = "4";  //number of compiles required
 		argv[7] = "50";  //dongle cooldown
-		argv[8] = "fifo";  //scheduling algorithm
+		argv[8] = "edf";  //scheduling algorithm
 
 	}
 	valid = validation(argc, argv);

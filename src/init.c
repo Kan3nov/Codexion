@@ -17,7 +17,6 @@ int	coders_init(t_arg *g_env, pthread_t *coders_th)
 	i = 0;
 	while(i < coder_num)
 	{
-		printf("meow1\n");
 		c = malloc(sizeof(t_coder));
 		c->cid = i;
 		c->last_comp = ((size_t) t.tv_sec) * 1000000 + t.tv_usec;
