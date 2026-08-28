@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 
-// dongle cooldown, number of philosophers, freeing mallocs
+// number of philosophers, freeing mallocs
 #include "../headers/codexion.h"
 int	main(int argc, char *argv[])
 {

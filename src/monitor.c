@@ -18,7 +18,7 @@ int check_comps(t_arg *g_env)
             return (0);
         i++;
     }
-    printf("All of the coders has finished their compiles\n");
+    print_state("All coders finished their compiles", g_env, NULL);
     return (1);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   validation.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
+/*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 11:41:01 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/27 14:01:17 by klafi            ###   ########.fr       */
+/*   Updated: 2026/08/28 12:50:52 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	validation(int argc, char *argv[])
 	}
 	while (i < argc - 1)
 	{
-		if (atoi(argv[i]) <= 0)
+		if (atoi(argv[i]) <= 0 && !(i == 7 && argv[7][0] == '0'))
 		{
 			printf("Invalid integer value for argument %d\n", i);
 			return (1);
