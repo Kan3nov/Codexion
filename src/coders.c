@@ -1,6 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   coders.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/29 10:38:43 by klafi             #+#    #+#             */
+/*   Updated: 2026/08/29 10:39:37 by klafi            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../headers/codexion.h"
-
 
 void	debug_and_refactor(t_coder *coder, t_arg *g_env)
 {
@@ -39,37 +49,39 @@ void	*compile(t_coder *coder, t_arg *g_env, int q1, int q2)
 	return (NULL);
 }
 
+int	cooldown(int q1, int q2, t_arg *g_env)
+{
+	size_t			now;
+	t_time			time;
+
+	gettimeofday(&time, NULL);
+	now = ((size_t) time.tv_sec) * 1000000 + time.tv_usec;
+	return (now > g_env->don_cd[q1] && now > g_env->don_cd[q2]);
+}
+
 void	*code(void *arg)
 {
 	int				q1;
 	int				q2;
-	t_queue 		*queues;
-	t_coder			*coder;
-	pthread_mutex_t	*q_locks;
-	t_time			time;
 	t_arg			*g_env;
-	size_t			now;
-	
+	t_coder			*coder;
 
 	g_env = ((t_code_arg *) arg)->g_env;
 	coder = ((t_code_arg *) arg)->coder;
-	queues = g_env->queues;
-	q_locks = g_env->q_locks;
 	q1 = coder->cid;
 	q2 = (coder->cid + 1) % atoi(g_env->argv[1]);
 	while (!g_env->stop)
 	{
-		gettimeofday(&time, NULL);
-		now = ((size_t) time.tv_sec) * 1000000 + time.tv_usec;
-		if (top(&queues[q1]) == coder->cid)
+		if (top(&g_env->queues[q1]) == coder->cid)
 		{
-			if (top(&queues[q2]) == coder->cid && now > g_env->don_cd[q1] && now > g_env->don_cd[q2])
+			if (top(&g_env->queues[q2]) == coder->cid
+				&& cooldown(q1, q2, g_env))
 				compile(coder, g_env, q1, q2);
 			else
-				insert_queue(coder, q_locks, queues, q2);
+				insert_queue(coder, g_env->q_locks, g_env->queues, q2);
 		}
 		else
-			insert_queue(coder, q_locks, queues, q1);
+			insert_queue(coder, g_env->q_locks, g_env->queues, q1);
 	}
-	return ((void*) NULL);
+	return ((void *) NULL);
 }

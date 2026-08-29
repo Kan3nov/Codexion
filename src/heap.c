@@ -6,7 +6,7 @@
 /*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 14:07:04 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/28 22:47:18 by klafi            ###   ########.fr       */
+/*   Updated: 2026/08/29 10:41:00 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,18 @@
 size_t	pr(t_coder *coder)
 {
 	if (!coder)
-		return -1;
+		return (-1);
 	if (strcmp(coder->argv[8], "edf") == 0)
 		return (coder->last_comp + atoi(coder->argv[2]) * 1000);
 	else
 		return (coder->arv_time);
 }
 
-void insert(t_queue *q, t_coder *elem)
+void	insert(t_queue *q, t_coder *elem)
 {
 	int		current;
 	void	*temp;
-	t_time 	time;
+	t_time	time;
 
 	if (q->len == q->limit)
 		return ((void) 0);
@@ -39,7 +39,8 @@ void insert(t_queue *q, t_coder *elem)
 	q->array[current] = elem;
 	gettimeofday(&time, NULL);
 	elem->arv_time = (size_t) time.tv_sec * 1000000 + time.tv_usec;
-	while (current != 0 && pr(q->array[parent(current)]) > pr(q->array[current]))
+	while (current != 0
+		&& pr(q->array[parent(current)]) > pr(q->array[current]))
 	{
 		temp = (q->array)[current];
 		(q->array)[current] = (q->array)[parent(current)];
@@ -54,7 +55,7 @@ void	heapify_down(t_queue *q, int current)
 	int		left;
 	int		right;
 	int		smallest;
-	t_coder *temp;
+	t_coder	*temp;
 
 	smallest = current;
 	while (1)
@@ -73,7 +74,7 @@ void	heapify_down(t_queue *q, int current)
 			current = smallest;
 		}
 		else
-			break;
+			break ;
 	}
 }
 
@@ -87,5 +88,5 @@ t_coder	*poll(t_queue *q)
 	q->array[0] = q->array[q->len - 1];
 	q->array[q->len-- - 1] = NULL;
 	heapify_down(q, 0);
-	return result;
+	return (result);
 }
