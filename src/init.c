@@ -23,7 +23,7 @@ int	coders_init(int coder_num, t_arg *g_env, t_coder **coders)
 	}
 	return (0);
 }
-int	coders_start(t_arg *g_env, pthread_t *coders_th)
+int	coders_start(t_arg *g_env, pthread_t *coders_th, t_code_arg ***c_args)
 {
 	int				i;
 	t_coder			**coders;
@@ -32,6 +32,7 @@ int	coders_start(t_arg *g_env, pthread_t *coders_th)
 
 	coders = malloc(sizeof(t_coder *) * atoi(g_env->argv[1]));
 	coder_num = atoi(g_env->argv[1]);
+	*c_args = malloc(sizeof(t_code_arg *) * coder_num);
 	coders_init(coder_num, g_env, coders);
 	g_env->coders = coders;
 	i = 0;
@@ -40,6 +41,7 @@ int	coders_start(t_arg *g_env, pthread_t *coders_th)
 		c_arg = malloc(sizeof(t_code_arg));
 		c_arg->coder = coders[i];
 		c_arg->g_env = g_env;
+		(*c_args)[i] = c_arg;
 		if (pthread_create(&coders_th[i++], NULL, &code, c_arg) != 0)
 			return (1);
 	}
@@ -69,7 +71,6 @@ void	glob_env_init(char **argv, t_arg **g_env, int coder_num, t_queue *queues)
 	pthread_mutex_t *q_locks;
 	pthread_mutex_t *output;
 	size_t			*dongles_cooldown;
-	int				i;
 
 	*g_env = malloc(sizeof(t_arg));
 	dongles = malloc(sizeof(pthread_mutex_t) * coder_num);
@@ -77,12 +78,11 @@ void	glob_env_init(char **argv, t_arg **g_env, int coder_num, t_queue *queues)
 	output =  malloc(sizeof(pthread_mutex_t));
 	dongles_cooldown = malloc(sizeof(size_t) * coder_num);
 	pthread_mutex_init(output, NULL);
-	i = 0;
-	while(i < coder_num)
+	while(--coder_num >= 0)
 	{
-		pthread_mutex_init(&dongles[i], NULL);
-		pthread_mutex_init(&q_locks[i], NULL);
-		dongles_cooldown[i++] = 0;
+		pthread_mutex_init(&dongles[coder_num], NULL);
+		pthread_mutex_init(&q_locks[coder_num], NULL);
+		dongles_cooldown[coder_num] = 0;
 	}
 	(*g_env)->argv = argv;
 	(*g_env)->dongles = dongles;
@@ -90,24 +90,50 @@ void	glob_env_init(char **argv, t_arg **g_env, int coder_num, t_queue *queues)
 	(*g_env)->q_locks = q_locks;
 	(*g_env)->queues = queues;
 	(*g_env)->don_cd = dongles_cooldown;
-}		
+	(*g_env)->stop = 0;
+}
 
-int thread_init(char *argv[])
+void	free_all(t_arg *g_env, t_code_arg **c_args, int coder_num,
+					pthread_t *coders_th)
 {
-	int				coder_num;
+	while (--coder_num >= 0)
+	{
+		pthread_mutex_destroy(&(g_env->dongles[coder_num]));
+		pthread_mutex_destroy(&(g_env->q_locks[coder_num]));
+		free(g_env->queues[coder_num].array);
+		free(g_env->coders[coder_num]);
+		free(c_args[coder_num]);
+	}
+	pthread_mutex_destroy(g_env->output);
+	free(g_env->output);
+	free(g_env->q_locks);
+	free(g_env->dongles);
+	free(g_env->coders);
+	free(coders_th);
+	free(g_env->don_cd);
+	free(g_env->queues);
+	free(c_args);
+	free(g_env);
+}
+
+int thread_init(char *argv[], int coder_num)
+{
 	pthread_t 		*coders_th;
 	t_queue			*queues;
 	t_arg			*g_env;
 	pthread_t		monitor;
+	t_code_arg		**c_args;
 
 	coder_num = atoi(argv[1]);
 	queues_init(&queues, coder_num);
 	glob_env_init(argv, &g_env, coder_num, queues);
 	coders_th = malloc(sizeof(pthread_t) * coder_num);
-	coders_start(g_env, coders_th);
+	coders_start(g_env, coders_th, &c_args);
 	monitor_init(g_env, &monitor);
 	pthread_join(monitor, NULL);
-	//free_all(g_env);
+	while (coder_num-- > 0)
+		pthread_join(coders_th[coder_num], NULL);
+	free_all(g_env, c_args, atoi(argv[1]), coders_th);
 	return (0);
 }
 

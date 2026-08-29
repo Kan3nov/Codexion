@@ -16,26 +16,22 @@ void print_state(char *state, t_arg *g_env, t_coder *c)
 {
 	t_time	now;
 	size_t	time;
-	static int	stop = 0;
 
 	gettimeofday(&now, NULL);
 	time = (size_t) now.tv_sec * 1000000 + now.tv_usec;
 	if (c)
 		time = time - c->start_time;
 	pthread_mutex_lock(g_env->output);
-	if (stop == 1)
-	{
-		pthread_mutex_unlock(g_env->output);
-		return ;
-	}
+	if (g_env->stop == 1)
+		return (pthread_mutex_unlock(g_env->output), (void) 0);
 	if (!c)
 	{
-		stop = 1;
+		g_env->stop = 1;
 		printf("%s\n", state);
 	}
 	else if (strcmp("burned out", state) == 0)
 	{
-		stop = 1;
+		g_env->stop = 1;
 		printf("%d %d %s\n", (int) (time / 1000), c->cid, state);
 	}
 	else

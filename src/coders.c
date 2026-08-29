@@ -57,10 +57,8 @@ void	*code(void *arg)
 	q_locks = g_env->q_locks;
 	q1 = coder->cid;
 	q2 = (coder->cid + 1) % atoi(g_env->argv[1]);
-	while (1)
+	while (!g_env->stop)
 	{
-		// if (num_reserved == num_coders - 1);
-		// 		continue;
 		gettimeofday(&time, NULL);
 		now = ((size_t) time.tv_sec) * 1000000 + time.tv_usec;
 		if (top(&queues[q1]) == coder->cid)
