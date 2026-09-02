@@ -19,7 +19,8 @@ int	main(int argc, char *argv[])
 	valid = validation(argc, argv);
 	if (valid)
 		return (valid);
-	thread_init(argv, atoi(argv[1]));
+	if (thread_init(argv, atoi(argv[1])))
+		printf("Error\n");
 	return (0);
 }
 

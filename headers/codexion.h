@@ -71,9 +71,9 @@ int		top(t_queue *q);
 t_coder	*poll(t_queue *q);
 void	print_state(char *state, t_arg *g_env, t_coder *c);
 
-void	monitor_init(t_arg *g_env, pthread_t *monitor_th);
-void	queues_init(t_queue **queues, int coder_num);
-void	glob_env_init(char **argv, t_arg **g_env, int coder_num,
+int		monitor_init(t_arg *g_env, pthread_t *monitor_th);
+int		queues_init(t_queue **queues, int coder_num);
+int		glob_env_init(char **argv, t_arg **g_env, int coder_num,
 			t_queue *queues);
 int		coders_init(int coder_num, t_arg *g_env, t_coder **coders);
 

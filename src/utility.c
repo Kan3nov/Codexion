@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:47:36 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/02 09:33:51 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/02 10:03:49 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,16 @@ int	coders_start(t_arg *g_env, pthread_t *coders_th, t_code_arg ***c_args)
 	coders = malloc(sizeof(t_coder *) * atoi(g_env->argv[1]));
 	coder_num = atoi(g_env->argv[1]);
 	*c_args = malloc(sizeof(t_code_arg *) * coder_num);
+	if (!coders || !*c_args)
+		return (1);
 	coders_init(coder_num, g_env, coders);
 	g_env->coders = coders;
 	i = 0;
 	while (i < coder_num)
 	{
 		c_arg = malloc(sizeof(t_code_arg));
+		if (!c_arg)
+			return (1);
 		c_arg->coder = coders[i];
 		c_arg->g_env = g_env;
 		(*c_args)[i] = c_arg;
