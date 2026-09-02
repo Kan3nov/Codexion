@@ -29,14 +29,14 @@ int	main(int argc, char *argv[])
 		argc = 9;
 		argv = malloc(sizeof(char *) * 9);
 		argv[0] = "meow"; // file name
-		argv[1] = "6";  //coders number
-		argv[2] = "1000";  //time to burnout
-		argv[3] = "100";  //time to compile
-		argv[4] = "150";  //time to debug
-		argv[5] = "100";  //time to refactor
-		argv[6] = "5";  //number of compiles required
-		argv[7] = "50";  //dongle cooldown
-		argv[8] = "edf";  //scheduling algorithm
+		argv[1] = "1";  //coders number
+		argv[2] = "800";  //time to burnout
+		argv[3] = "200";  //time to compile
+		argv[4] = "200";  //time to debug
+		argv[5] = "200";  //time to refactor
+		argv[6] = "10";  //number of compiles required
+		argv[7] = "0";  //dongle cooldown
+		argv[8] = "fifo";  //scheduling algorithm
 	}
 	free(argv);
 */

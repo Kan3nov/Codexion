@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
+/*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:44:19 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/29 10:46:35 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/02 09:58:46 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,13 @@ void	queues_init(t_queue **queues, int coder_num)
 
 	i = 0;
 	*queues = malloc(sizeof(t_queue) * coder_num);
+	if (!*queues)
+		return ;
 	while (i < coder_num)
 	{
 		(*queues)[i].array = malloc(sizeof(t_coder) * 2);
+		if (!(*queues)[i].array)
+			return ;
 		(*queues)[i].array[0] = NULL;
 		(*queues)[i].array[1] = NULL;
 		(*queues)[i].len = 0;
@@ -60,11 +64,12 @@ void	glob_env_init(char **argv, t_arg **g_env,
 	pthread_mutex_t	*output;
 	size_t			*dongles_cooldown;
 
-	*g_env = malloc(sizeof(t_arg));
 	dongles = malloc(sizeof(pthread_mutex_t) * coder_num);
 	q_locks = malloc(sizeof(pthread_mutex_t) * coder_num);
 	output = malloc(sizeof(pthread_mutex_t));
 	dongles_cooldown = malloc(sizeof(size_t) * coder_num);
+	if (!*g_env || !dongles || !q_locks || !output || !dongles_cooldown)
+		return ;
 	pthread_mutex_init(output, NULL);
 	while (--coder_num >= 0)
 	{
@@ -91,8 +96,11 @@ int	thread_init(char *argv[], int coder_num)
 
 	coder_num = atoi(argv[1]);
 	queues_init(&queues, coder_num);
+	g_env = malloc(sizeof(t_arg));
 	glob_env_init(argv, &g_env, coder_num, queues);
 	coders_th = malloc(sizeof(pthread_t) * coder_num);
+	if (!coders_th)
+		return (-1);
 	coders_start(g_env, coders_th, &c_args);
 	monitor_init(g_env, &monitor);
 	pthread_join(monitor, NULL);

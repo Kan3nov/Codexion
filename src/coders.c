@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   coders.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
+/*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:38:43 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/29 10:39:37 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/02 09:49:32 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,18 +32,22 @@ void	*compile(t_coder *coder, t_arg *g_env, int q1, int q2)
 
 	pthread_mutex_lock(&(g_env->dongles[q1]));
 	print_state("has taken a dongle", g_env, coder);
+	while (q1 == q2 && !g_env->stop)
+		;
+	if (q1 == q2)
+		return (pthread_mutex_unlock(&(g_env->dongles[q1])), NULL);
 	pthread_mutex_lock(&(g_env->dongles[q2]));
 	print_state("has taken a dongle", g_env, coder);
 	print_state("is compiling", g_env, coder);
 	compile_time = atoi(g_env->argv[3]);
 	usleep(compile_time * 1000);
 	poll_queues(q1, q2, g_env->q_locks, g_env->queues);
-	coder->comp_num++;
-	pthread_mutex_unlock(&(g_env->dongles[q1]));
-	pthread_mutex_unlock(&(g_env->dongles[q2]));
 	gettimeofday(&now, NULL);
 	coder->last_comp = ((size_t) now.tv_sec) * 1000000 + now.tv_usec;
 	g_env->don_cd[q1] = coder->last_comp + atoi(coder->argv[7]) * 1000;
+	coder->comp_num++;
+	pthread_mutex_unlock(&(g_env->dongles[q1]));
+	pthread_mutex_unlock(&(g_env->dongles[q2]));
 	g_env->don_cd[q2] = g_env->don_cd[q1];
 	debug_and_refactor(coder, g_env);
 	return (NULL);
@@ -59,6 +63,20 @@ int	cooldown(int q1, int q2, t_arg *g_env)
 	return (now > g_env->don_cd[q1] && now > g_env->don_cd[q2]);
 }
 
+void	determine_dongles(int *q1, int *q2, t_coder *coder, t_arg *g_env)
+{
+	if (coder->cid % 2 == 0)
+	{
+		*q1 = coder->cid;
+		*q2 = (coder->cid + 1) % atoi(g_env->argv[1]);
+	}
+	else
+	{
+		*q1 = (coder->cid + 1) % atoi(g_env->argv[1]);
+		*q2 = coder->cid;
+	}
+}
+
 void	*code(void *arg)
 {
 	int				q1;
@@ -68,8 +86,7 @@ void	*code(void *arg)
 
 	g_env = ((t_code_arg *) arg)->g_env;
 	coder = ((t_code_arg *) arg)->coder;
-	q1 = coder->cid;
-	q2 = (coder->cid + 1) % atoi(g_env->argv[1]);
+	determine_dongles(&q1, &q2, coder, g_env);
 	while (!g_env->stop)
 	{
 		if (top(&g_env->queues[q1]) == coder->cid)
