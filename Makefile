@@ -1,5 +1,6 @@
 vpath %.c src
 vpath %.h headers
+vpath %.o objects
 
 SRCS = main.c \
 	validation.c \
@@ -13,20 +14,25 @@ SRCS = main.c \
 
 OBJS := $(SRCS:%.c=%.o)
 
+OBJS_DIR := $(foreach obj, $(OBJS), objects/$(obj))
+
 HEADERS := codexion.h heap.h
 
 NAME := codexion
 
-all: $(NAME)
+all: objects $(NAME)
+
+objects:
+	@mkdir objects
 
 $(NAME): $(OBJS)
-	cc -Wextra -Werror -Wall $(OBJS) -g -o $(NAME)
+	@cc -Wextra -Werror -Wall $(OBJS_DIR) -g -o $(NAME)
 
-$(OBJS): %.o : src/%.c $(HEADERS)
-	cc -Wextra -Werror -Wall $< -g -c
+$(OBJS): %.o : %.c $(HEADERS)
+	@cc -Wextra -Werror -Wall $< -g -c -o objects/$@
 
 clean:
-	@rm -f $(OBJS)
+	@rm -rf objects
 
 fclean: clean
 	@rm -f $(NAME)
