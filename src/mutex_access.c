@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mutex_access.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
+/*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:46:42 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/29 10:47:32 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/03 08:14:21 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,10 @@ void	print_state(char *state, t_arg *g_env, t_coder *c)
 	else if (strcmp("burned out", state) == 0)
 	{
 		g_env->stop = 1;
-		printf("%d %d %s\n", (int)(time / 1000), c->cid, state);
+		printf("%d %d %s\n", (int)(time / 1000), c->cid + 1, state);
 	}
 	else
-		printf("%d %d %s\n", (int)(time / 1000), c->cid, state);
+		printf("%d %d %s\n", (int)(time / 1000), c->cid + 1, state);
 	pthread_mutex_unlock(g_env->output);
 }
 

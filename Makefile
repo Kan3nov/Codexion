@@ -26,10 +26,10 @@ objects:
 	@mkdir objects
 
 $(NAME): $(OBJS)
-	@cc -Wextra -Werror -Wall $(OBJS_DIR) -g -o $(NAME)
+	@cc -Wextra -Werror -Wall -pthread $(OBJS_DIR) -g -o $(NAME)
 
 $(OBJS): %.o : %.c $(HEADERS)
-	@cc -Wextra -Werror -Wall $< -g -c -o objects/$@
+	@cc -Wextra -Werror -Wall -pthread $< -g -c -o objects/$@
 
 clean:
 	@rm -rf objects
