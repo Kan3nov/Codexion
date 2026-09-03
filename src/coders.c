@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:38:43 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/02 09:49:32 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/03 09:46:44 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,13 @@ void	*compile(t_coder *coder, t_arg *g_env, int q1, int q2)
 	compile_time = atoi(g_env->argv[3]);
 	usleep(compile_time * 1000);
 	poll_queues(q1, q2, g_env->q_locks, g_env->queues);
-	gettimeofday(&now, NULL);
-	coder->last_comp = ((size_t) now.tv_sec) * 1000000 + now.tv_usec;
-	g_env->don_cd[q1] = coder->last_comp + atoi(coder->argv[7]) * 1000;
 	coder->comp_num++;
 	pthread_mutex_unlock(&(g_env->dongles[q1]));
 	pthread_mutex_unlock(&(g_env->dongles[q2]));
 	g_env->don_cd[q2] = g_env->don_cd[q1];
+	gettimeofday(&now, NULL);
+	coder->last_comp = ((size_t) now.tv_sec) * 1000000 + now.tv_usec;
+	g_env->don_cd[q1] = coder->last_comp + atoi(coder->argv[7]) * 1000;
 	debug_and_refactor(coder, g_env);
 	return (NULL);
 }

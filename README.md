@@ -18,14 +18,14 @@ With the use of **Pthreads**, I assigned each a coder a thread of execution, whe
 ## Deadlock prevention and Coffman’s conditions
 The Coffman conditions are the four system properties that—when they all hold simultaneously—make a deadlock possible. They do not guarantee that a deadlock will occur, but they identify the structural prerequisites.
 
-1. Mutual exclusion
-At least one resource involved in each request is non-shareable; it can be held by only one task at a time.
-2. Hold-and-wait
-Tasks already holding one or more resources may request additional resources and wait while still holding their current allocations.
-3. No pre-emption
-Resources cannot be forcibly removed from a task; release is voluntary.
-4. Circular wait
-There exists a closed chain of k ≥ 2 tasks {T₁, T₂, … , Tₖ} such that each Tᵢ holds a resource needed by Tᵢ₊₁ (with Tₖ needing a resource held by T₁).
+1. **Mutual exclusion**
+   - At least one resource involved in each request is non-shareable; it can be held by only one task at a time.
+2. **Hold-and-wait**
+	- Tasks already holding one or more resources may request additional resources and wait while still holding their current allocations.
+3. **No pre-emption**
+	- Resources cannot be forcibly removed from a task; release is voluntary.
+4. **Circular wait**
+	- There exists a closed chain of k ≥ 2 tasks {T₁, T₂, … , Tₖ} such that each Tᵢ holds a resource needed by Tᵢ₊₁ (with Tₖ needing a resource held by T₁).
 
 To make the possibility of deadlocks zero, we have to prevent on of the aforementioned properties from holding true.
 A circular wait may only happen if all coders tried to hold their right(or left) dongles first then the left one(or right one). In my program, an asymmetric approach was followed; that is, and odd coder picks up first his left dongle and then his right dongle, whereas an even coder picks up his right dongle and then his left dongle. That way, a circular wait could never happen.
@@ -47,8 +47,10 @@ You can compile and run the program using a Makefile with those rules:
 - clean: deletes all object files(stored in objects directory).
 - fclean: calls *clean* rule and deletes the executable.
 - re: deletes all object files and recompiles the program.
+
 You can use make like:
 `make 'rule'`
+
 For the executable, it receives multiple arguments (listed in order):
 -  number_of_coders: The number of coders and also the number of dongles.
 - time_to_burnout (in milliseconds): If a coder did not start compiling within time_to_burnout milliseconds since the beginning of their last compile or the beginning of the simulation, they burn out.
