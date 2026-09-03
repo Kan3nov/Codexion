@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 11:41:01 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/02 15:36:04 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/03 15:11:23 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ int	validation(int argc, char *argv[])
 	int	i;
 
 	i = 1;
-	if (argc < 9)
+	if (argc != 9)
 	{
-		printf("One or more arguments are missing\n");
+		printf("Invalid number of arguments, should be exactly 8.\n");
 		return (1);
 	}
 	while (i < argc - 1)
