@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:38:43 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/03 09:46:44 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/03 12:24:35 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void	debug_and_refactor(t_coder *coder, t_arg *g_env)
 	int		debug_time;
 	int		refactor_time;
 
-	print_state("is debugging", g_env, coder);
 	debug_time = atoi(g_env->argv[4]);
 	usleep(debug_time * 1000);
 	print_state("is refactoring", g_env, coder);
@@ -45,10 +44,11 @@ void	*compile(t_coder *coder, t_arg *g_env, int q1, int q2)
 	coder->comp_num++;
 	pthread_mutex_unlock(&(g_env->dongles[q1]));
 	pthread_mutex_unlock(&(g_env->dongles[q2]));
-	g_env->don_cd[q2] = g_env->don_cd[q1];
+	print_state("is debugging", g_env, coder);
 	gettimeofday(&now, NULL);
 	coder->last_comp = ((size_t) now.tv_sec) * 1000000 + now.tv_usec;
 	g_env->don_cd[q1] = coder->last_comp + atoi(coder->argv[7]) * 1000;
+	g_env->don_cd[q2] = g_env->don_cd[q1];
 	debug_and_refactor(coder, g_env);
 	return (NULL);
 }

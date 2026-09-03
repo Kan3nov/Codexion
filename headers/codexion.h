@@ -69,7 +69,6 @@ int		thread_init(char *argv[], int coder_num);
 void	insert(t_queue *q, t_coder *elem);
 int		top(t_queue *q);
 t_coder	*poll(t_queue *q);
-void	print_state(char *state, t_arg *g_env, t_coder *c);
 
 int		monitor_init(t_arg *g_env, pthread_t *monitor_th);
 int		queues_init(t_queue **queues, int coder_num);
