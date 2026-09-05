@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   validation.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
+/*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 11:41:01 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/03 15:11:23 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/04 16:57:44 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	validation(int argc, char *argv[])
 		}
 		i++;
 	}
-	if (strcmp(argv[8], "fifo") && strcmp(argv[8], "edf"))
+	if (strcmp(argv[8], "fifo") && strcmp(argv[8], "edf") && strcmp(argv[8], "lifo"))
 	{
 		printf("Invalid scheduling algorithm\n");
 		return (1);

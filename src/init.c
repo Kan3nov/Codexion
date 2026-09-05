@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
+/*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:44:19 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/02 10:11:32 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/04 18:03:23 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,18 +64,22 @@ int	glob_env_init(char **argv, t_arg **g_env,
 	pthread_mutex_t	*q_locks;
 	pthread_mutex_t	*output;
 	size_t			*dongles_cooldown;
+	int				*d_avail;
 
 	dongles = malloc(sizeof(pthread_mutex_t) * coder_num);
 	q_locks = malloc(sizeof(pthread_mutex_t) * coder_num);
 	output = malloc(sizeof(pthread_mutex_t));
 	dongles_cooldown = malloc(sizeof(size_t) * coder_num);
-	if (!*g_env || !dongles || !q_locks || !output || !dongles_cooldown)
+	d_avail = malloc(sizeof(int) * coder_num);
+	if (!*g_env || !dongles || !q_locks || !output
+		|| !dongles_cooldown || !d_avail)
 		return (1);
 	while (--coder_num >= 0)
 	{
 		pthread_mutex_init(&dongles[coder_num], NULL);
 		pthread_mutex_init(&q_locks[coder_num], NULL);
 		dongles_cooldown[coder_num] = 0;
+		d_avail[coder_num] = 1;
 	}
 	(*g_env)->argv = argv;
 	(*g_env)->dongles = dongles;
@@ -84,6 +88,7 @@ int	glob_env_init(char **argv, t_arg **g_env,
 	(*g_env)->queues = queues;
 	(*g_env)->don_cd = dongles_cooldown;
 	(*g_env)->stop = 0;
+	(*g_env)->d_avail = d_avail;
 	return (pthread_mutex_init(output, NULL), 0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 14:07:04 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/29 10:41:00 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/04 16:58:12 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,10 @@ size_t	pr(t_coder *coder)
 		return (-1);
 	if (strcmp(coder->argv[8], "edf") == 0)
 		return (coder->last_comp + atoi(coder->argv[2]) * 1000);
-	else
+	else if (strcmp(coder->argv[8], "fifo") == 0)
 		return (coder->arv_time);
+	else
+		return (1 - coder->arv_time);
 }
 
 void	insert(t_queue *q, t_coder *elem)

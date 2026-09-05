@@ -52,6 +52,7 @@ typedef struct arg
 	pthread_mutex_t	*output;
 	t_coder			**coders;
 	size_t			*don_cd;
+	int				*d_avail;
 	int				stop;
 }	t_arg;
 
