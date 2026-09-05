@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/25 12:00:08 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/05 14:24:55 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/05 14:44:23 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,17 @@ int	right_c(int parent)
 	return (parent * 2 + 2);
 }
 
-int	top(t_queue *q)
+int	top(t_arg *g_env, int qnum)
 {
+	t_queue	*q;
+	int		result;
+
+	q = &g_env->queues[qnum];
+	pthread_mutex_lock(&g_env->q_locks[qnum]);
 	if (q->len != 0 && q->array[0])
-		return (q->array[0]->cid);
+		result = q->array[0]->cid;
 	else
-		return (-1);
+		result = -1;
+	pthread_mutex_unlock(&g_env->q_locks[qnum]);
+	return (result);
 }

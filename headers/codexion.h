@@ -67,7 +67,7 @@ void	free_all(t_arg *g_env, t_code_arg **c_args, int coder_num,
 int		mem_alloc(t_arg **g_env, int coder_num);
 
 void	insert(t_queue *q, t_coder *elem);
-int		top(t_queue *q);
+int		top(t_arg *g_env, int qnum);
 t_coder	*poll(t_queue *q);
 void	poll_queues(int q1, int q2, pthread_mutex_t *q_locks, t_queue *queues);
 void	insert_queue(t_coder *coder, pthread_mutex_t *q_locks,

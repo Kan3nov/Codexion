@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   coders.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
+/*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:38:43 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/04 18:02:34 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/05 14:34:20 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,9 +93,9 @@ void	*code(void *arg)
 	determine_dongles(&q1, &q2, coder, g_env);
 	while (!g_env->stop)
 	{
-		if (top(&g_env->queues[q1]) == coder->cid && g_env->d_avail[q1])
+		if (top(g_env, q1) == coder->cid && g_env->d_avail[q1])
 		{
-			if (top(&g_env->queues[q2]) == coder->cid
+			if (top(g_env, q2) == coder->cid
 				&& cooldown(q1, q2, g_env) && g_env->d_avail[q2])
 				compile(coder, g_env, q1, q2);
 			else
