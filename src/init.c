@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
+/*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:44:19 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/04 18:03:23 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/05 09:31:56 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,36 +60,18 @@ int	queues_init(t_queue **queues, int coder_num)
 int	glob_env_init(char **argv, t_arg **g_env,
 	int coder_num, t_queue *queues)
 {
-	pthread_mutex_t	*dongles;
-	pthread_mutex_t	*q_locks;
-	pthread_mutex_t	*output;
-	size_t			*dongles_cooldown;
-	int				*d_avail;
-
-	dongles = malloc(sizeof(pthread_mutex_t) * coder_num);
-	q_locks = malloc(sizeof(pthread_mutex_t) * coder_num);
-	output = malloc(sizeof(pthread_mutex_t));
-	dongles_cooldown = malloc(sizeof(size_t) * coder_num);
-	d_avail = malloc(sizeof(int) * coder_num);
-	if (!*g_env || !dongles || !q_locks || !output
-		|| !dongles_cooldown || !d_avail)
+	if (mem_alloc(g_env, coder_num))
 		return (1);
 	while (--coder_num >= 0)
 	{
-		pthread_mutex_init(&dongles[coder_num], NULL);
-		pthread_mutex_init(&q_locks[coder_num], NULL);
-		dongles_cooldown[coder_num] = 0;
-		d_avail[coder_num] = 1;
+		pthread_mutex_init(&(*g_env)->dongles[coder_num], NULL);
+		pthread_mutex_init(&(*g_env)->q_locks[coder_num], NULL);
+		(*g_env)->don_cd[coder_num] = 0;
+		(*g_env)->d_avail[coder_num] = 1;
 	}
 	(*g_env)->argv = argv;
-	(*g_env)->dongles = dongles;
-	(*g_env)->output = output;
-	(*g_env)->q_locks = q_locks;
 	(*g_env)->queues = queues;
-	(*g_env)->don_cd = dongles_cooldown;
-	(*g_env)->stop = 0;
-	(*g_env)->d_avail = d_avail;
-	return (pthread_mutex_init(output, NULL), 0);
+	return (pthread_mutex_init((*g_env)->output, NULL), 0);
 }
 
 int	thread_init(char *argv[], int coder_num)

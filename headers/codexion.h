@@ -62,26 +62,29 @@ typedef struct code_arg
 	t_coder	*coder;
 }	t_code_arg;
 
-int		coders_start(t_arg *g_env, pthread_t *coders_th, t_code_arg ***c_args);
 void	free_all(t_arg *g_env, t_code_arg **c_args, int coder_num,
 			pthread_t *coders_th);
-int		validation(int argc, char *argv[]);
-int		thread_init(char *argv[], int coder_num);
+int		mem_alloc(t_arg **g_env, int coder_num);
+
 void	insert(t_queue *q, t_coder *elem);
 int		top(t_queue *q);
 t_coder	*poll(t_queue *q);
+void	poll_queues(int q1, int q2, pthread_mutex_t *q_locks, t_queue *queues);
+void	insert_queue(t_coder *coder, pthread_mutex_t *q_locks,
+			t_queue *queues, int q);
 
+int		thread_init(char *argv[], int coder_num);
 int		monitor_init(t_arg *g_env, pthread_t *monitor_th);
 int		queues_init(t_queue **queues, int coder_num);
 int		glob_env_init(char **argv, t_arg **g_env, int coder_num,
 			t_queue *queues);
 int		coders_init(int coder_num, t_arg *g_env, t_coder **coders);
+int		coders_start(t_arg *g_env, pthread_t *coders_th, t_code_arg ***c_args);
 
 void	*code(void *arg);
 void	*monitor(void *arg);
 
-void	poll_queues(int q1, int q2, pthread_mutex_t *q_locks, t_queue *queues);
-void	insert_queue(t_coder *coder, pthread_mutex_t *q_locks,
-			t_queue *queues, int q);
 void	print_state(char *state, t_arg *g_env, t_coder *c);
+int		validation(int argc, char *argv[]);
+
 #endif

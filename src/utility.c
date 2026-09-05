@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:47:36 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/02 10:03:49 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/05 09:38:18 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ void	free_all(t_arg *g_env, t_code_arg **c_args, int coder_num,
 	}
 	pthread_mutex_destroy(g_env->output);
 	free(g_env->output);
+	free(g_env->d_avail);
 	free(g_env->q_locks);
 	free(g_env->dongles);
 	free(g_env->coders);
@@ -62,4 +63,29 @@ void	free_all(t_arg *g_env, t_code_arg **c_args, int coder_num,
 	free(g_env->queues);
 	free(c_args);
 	free(g_env);
+}
+
+int	mem_alloc(t_arg **g_env, int coder_num)
+{
+	pthread_mutex_t	*dongles;
+	pthread_mutex_t	*q_locks;
+	pthread_mutex_t	*output;
+	size_t			*dongles_cooldown;
+	int				*d_avail;
+
+	dongles = malloc(sizeof(pthread_mutex_t) * coder_num);
+	q_locks = malloc(sizeof(pthread_mutex_t) * coder_num);
+	output = malloc(sizeof(pthread_mutex_t));
+	dongles_cooldown = malloc(sizeof(size_t) * coder_num);
+	d_avail = malloc(sizeof(int) * coder_num);
+	if (!*g_env || !dongles || !q_locks || !output
+		|| !dongles_cooldown || !d_avail)
+		return (1);
+	(*g_env)->dongles = dongles;
+	(*g_env)->output = output;
+	(*g_env)->q_locks = q_locks;
+	(*g_env)->don_cd = dongles_cooldown;
+	(*g_env)->stop = 0;
+	(*g_env)->d_avail = d_avail;
+	return (0);
 }

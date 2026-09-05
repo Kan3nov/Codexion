@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heap.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
+/*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 14:07:04 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/04 16:58:12 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/05 09:39:01 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ size_t	pr(t_coder *coder)
 	else if (strcmp(coder->argv[8], "fifo") == 0)
 		return (coder->arv_time);
 	else
-		return (1 - coder->arv_time);
+		return (-1);
 }
 
 void	insert(t_queue *q, t_coder *elem)
