@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 14:07:04 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/05 09:39:01 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/05 14:26:27 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	insert(t_queue *q, t_coder *elem)
 	void	*temp;
 	t_time	time;
 
-	if (q->len == q->limit)
+	if (q->len == q->limit || !q || !elem)
 		return ((void) 0);
 	current = 0;
 	while (current < q->len)

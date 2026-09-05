@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heap_helper.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
+/*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/25 12:00:08 by klafi             #+#    #+#             */
-/*   Updated: 2026/08/29 10:42:26 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/05 14:24:55 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	right_c(int parent)
 
 int	top(t_queue *q)
 {
-	if (q->len != 0)
+	if (q->len != 0 && q->array[0])
 		return (q->array[0]->cid);
 	else
 		return (-1);
