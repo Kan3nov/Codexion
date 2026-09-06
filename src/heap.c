@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 14:07:04 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/06 08:32:37 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/06 14:06:15 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	insert(t_queue *q, t_coder *elem)
 	t_time	time;
 
 	if (q->len == q->limit || !q || !elem)
-		return ((void) 0);
+		return ;
 	current = 0;
 	while (current < q->len)
 		if (q->array[current++]->cid == elem->cid)
@@ -92,3 +92,22 @@ t_coder	*poll(t_queue *q)
 	heapify_down(q, 0);
 	return (result);
 }
+
+/*
+void print_q(t_queue *q)
+{
+	int	i;
+
+	i = 0;
+	if (q->len == 0)
+		printf("empty\n");
+	while (i < q->len - 1)
+	{
+		if (q->array[i])
+			printf("%d<-", q->array[i]->cid + 1);
+		i++;
+	}
+	if (q->array[i])
+		printf("%d\n", q->array[i]->cid + 1);
+}
+*/

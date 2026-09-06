@@ -86,5 +86,5 @@ void	*monitor(void *arg);
 
 void	print_state(char *state, t_arg *g_env, t_coder *c);
 int		validation(int argc, char *argv[]);
-
+// void print_q(t_queue *q);
 #endif
