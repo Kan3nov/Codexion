@@ -47,10 +47,7 @@ int	check_burnout(t_arg *g_env)
 	{
 		burn_time = atoi(g_env->argv[2]) * 1000;
 		if ((g_env->coders[i]->last_comp + burn_time) / 1000 < now / 1000)
-		{
-			print_state("burned out", g_env, g_env->coders[i]);
-			return (1);
-		}
+			return (print_state("burned out", g_env, g_env->coders[i]), 1);
 		i++;
 	}
 	return (0);
