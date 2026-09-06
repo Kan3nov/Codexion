@@ -6,7 +6,7 @@
 /*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:38:43 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/07 00:51:46 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/07 01:09:04 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,16 +93,16 @@ void	*code(void *arg)
 	determine_dongles(&q1, &q2, coder, g_env);
 	while (!g_env->stop)
 	{
-		insert_queue(coder, g_env->q_locks, g_env->queues, q1);
-		insert_queue(coder, g_env->q_locks, g_env->queues, q2);
-		if (top(g_env, q1) == coder->cid 
-			&& top(g_env, q2) == coder->cid && cooldown(q1, q2, g_env))
-			//&& g_env->d_avail[q1] && g_env->d_avail[q2])
+		if (top(g_env, q1) == coder->cid && g_env->d_avail[q1])
 		{
-			g_env->d_avail[q1] = 0;
-			g_env->d_avail[q2] = 0;
-			compile(coder, g_env, q1, q2);
+			if (top(g_env, q2) == coder->cid
+				&& cooldown(q1, q2, g_env) && g_env->d_avail[q2])
+				compile(coder, g_env, q1, q2);
+			else
+				insert_queue(coder, g_env->q_locks, g_env->queues, q2);
 		}
+		else
+			insert_queue(coder, g_env->q_locks, g_env->queues, q1);
 	}
 	return ((void *) NULL);
 }
