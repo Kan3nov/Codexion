@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   coders.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: klafi <kanan.lafi@learner.42.tech>         +#+  +:+       +#+        */
+/*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:38:43 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/07 01:09:04 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/07 09:09:48 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	*compile(t_coder *coder, t_arg *g_env, int q1, int q2)
 	gettimeofday(&now, NULL);
 	coder->last_comp = ((size_t) now.tv_sec) * 1000000 + now.tv_usec;
 	g_env->don_cd[q1] = coder->last_comp + atoi(coder->argv[7]) * 1000;
-	g_env->don_cd[q2] = g_env->don_cd[q1];
+	g_env->don_cd[q2] = coder->last_comp + atoi(coder->argv[7]) * 1000;
 	pthread_mutex_unlock(&(g_env->dongles[q1]));
 	pthread_mutex_unlock(&(g_env->dongles[q2]));
 	g_env->d_avail[q1] = 1;
@@ -91,18 +91,20 @@ void	*code(void *arg)
 	g_env = ((t_code_arg *) arg)->g_env;
 	coder = ((t_code_arg *) arg)->coder;
 	determine_dongles(&q1, &q2, coder, g_env);
+	insert_queue(coder, g_env->q_locks, g_env->queues, q1);
+	insert_queue(coder, g_env->q_locks, g_env->queues, q2);
 	while (!g_env->stop)
 	{
 		if (top(g_env, q1) == coder->cid && g_env->d_avail[q1])
-		{
 			if (top(g_env, q2) == coder->cid
 				&& cooldown(q1, q2, g_env) && g_env->d_avail[q2])
+			{
+				g_env->d_avail[q1] = 0;
+				g_env->d_avail[q2] = 0;
 				compile(coder, g_env, q1, q2);
-			else
+				insert_queue(coder, g_env->q_locks, g_env->queues, q1);
 				insert_queue(coder, g_env->q_locks, g_env->queues, q2);
-		}
-		else
-			insert_queue(coder, g_env->q_locks, g_env->queues, q1);
+			}
 	}
 	return ((void *) NULL);
 }
