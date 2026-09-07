@@ -53,6 +53,40 @@ int	check_burnout(t_arg *g_env)
 	return (0);
 }
 
+int	cooldown(int q1, int q2, t_arg *g_env)
+{
+	size_t			now;
+	t_time			time;
+
+	gettimeofday(&time, NULL);
+	now = ((size_t) time.tv_sec) * 1000000 + time.tv_usec;
+	return (now > g_env->don_cd[q1] && now > g_env->don_cd[q2]);
+}
+
+int	is_available(t_coder *c, t_arg *g_env)
+{
+	if (g_env->d_avail[c->q1] && g_env->d_avail[c->q2]
+			&& cooldown(c->q1, c->q2, g_env))
+	{
+		g_env->d_avail[c->q1] = 0;
+		g_env->d_avail[c->q1] = 0;
+		return (1);
+	}
+	return (0);
+}
+
+void signal_coders(t_arg *g_env)
+{
+	int	coder_num;
+
+	coder_num = atoi(g_env->argv[1]);
+	while (coder_num--)
+		if (is_available(g_env->coders[top(g_env)], g_env))
+			pthread_cond_signal(&g_env->acq_dong[coder_num]);
+		else
+			poll_queue(g_env);
+}
+
 void	*monitor(void *arg)
 {
 	t_arg	*g_env;

@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:44:19 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/05 09:31:56 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/07 16:02:47 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,54 +30,47 @@ int	coders_init(int coder_num, t_arg *g_env, t_coder **coders)
 		c->comp_num = 0;
 		c->start_time = c->last_comp;
 		c->argv = g_env->argv;
+		determine_dongles(c, g_env);
 		coders[i++] = c;
 	}
 	return (0);
 }
 
-int	queues_init(t_queue **queues, int coder_num)
+int	queue_init(t_arg *g_env, int coder_num)
 {
 	int	i;
+	t_queue q;
 
 	i = 0;
-	*queues = malloc(sizeof(t_queue) * coder_num);
-	if (!*queues)
+	q.array = malloc(sizeof(t_coder *) * coder_num);
+	if (!q.array)
 		return (1);
+	q.len = 0;
+	q.limit = coder_num;
 	while (i < coder_num)
-	{
-		(*queues)[i].array = malloc(sizeof(t_coder) * 2);
-		if (!(*queues)[i].array)
-			return (1);
-		(*queues)[i].array[0] = NULL;
-		(*queues)[i].array[1] = NULL;
-		(*queues)[i].len = 0;
-		(*queues)[i].limit = 2;
-		i++;
-	}
+		q.array[i++] = NULL;
+	g_env->queue = q;
 	return (0);
 }
 
 int	glob_env_init(char **argv, t_arg **g_env,
-	int coder_num, t_queue *queues)
+	int coder_num)
 {
 	if (mem_alloc(g_env, coder_num))
 		return (1);
 	while (--coder_num >= 0)
 	{
 		pthread_mutex_init(&(*g_env)->dongles[coder_num], NULL);
-		pthread_mutex_init(&(*g_env)->q_locks[coder_num], NULL);
 		(*g_env)->don_cd[coder_num] = 0;
 		(*g_env)->d_avail[coder_num] = 1;
 	}
 	(*g_env)->argv = argv;
-	(*g_env)->queues = queues;
 	return (pthread_mutex_init((*g_env)->output, NULL), 0);
 }
 
 int	thread_init(char *argv[], int coder_num)
 {
 	pthread_t		*coders_th;
-	t_queue			*queues;
 	t_arg			*g_env;
 	pthread_t		monitor;
 	t_code_arg		**c_args;
@@ -87,9 +80,9 @@ int	thread_init(char *argv[], int coder_num)
 	g_env = malloc(sizeof(t_arg));
 	if (!coders_th || !g_env)
 		return (1);
-	if (queues_init(&queues, coder_num))
+	if (glob_env_init(argv, &g_env, coder_num))
 		return (1);
-	if (glob_env_init(argv, &g_env, coder_num, queues))
+	if (queue_init(g_env, coder_num))
 		return (1);
 	if (coders_start(g_env, coders_th, &c_args))
 		return (1);

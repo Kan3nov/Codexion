@@ -28,6 +28,8 @@ typedef struct coder
 	size_t			start_time;
 	int				comp_num;
 	char			**argv;
+	int				q1;
+	int				q2;
 }	t_coder;
 
 typedef struct timeval
@@ -48,12 +50,15 @@ typedef struct arg
 	char			**argv;
 	pthread_mutex_t	*dongles;
 	t_queue			*queues;
-	pthread_mutex_t	*q_locks;
+	pthread_mutex_t	*q_lock;
 	pthread_mutex_t	*output;
 	t_coder			**coders;
 	size_t			*don_cd;
 	int				*d_avail;
 	int				stop;
+	t_queue			queue;
+	pthread_cond_t	*acq_dong;
+	pthread_mutex_t	*coders_exec;
 }	t_arg;
 
 typedef struct code_arg
@@ -67,19 +72,18 @@ void	free_all(t_arg *g_env, t_code_arg **c_args, int coder_num,
 int		mem_alloc(t_arg **g_env, int coder_num);
 
 void	insert(t_queue *q, t_coder *elem);
-int		top(t_arg *g_env, int qnum);
+int		top(t_arg *g_env);
 t_coder	*poll(t_queue *q);
-void	poll_queues(int q1, int q2, pthread_mutex_t *q_locks, t_queue *queues);
-void	insert_queue(t_coder *coder, pthread_mutex_t *q_locks,
-			t_queue *queues, int q);
+void	poll_queue(t_arg *g_env);
+void	insert_queue(t_coder *coder, t_arg *g_env);
 
 int		thread_init(char *argv[], int coder_num);
 int		monitor_init(t_arg *g_env, pthread_t *monitor_th);
-int		queues_init(t_queue **queues, int coder_num);
-int		glob_env_init(char **argv, t_arg **g_env, int coder_num,
-			t_queue *queues);
+int		queue_init(t_arg *g_env, int coder_num);
+int		glob_env_init(char **argv, t_arg **g_env, int coder_num);
 int		coders_init(int coder_num, t_arg *g_env, t_coder **coders);
 int		coders_start(t_arg *g_env, pthread_t *coders_th, t_code_arg ***c_args);
+void	determine_dongles(t_coder *coder, t_arg *g_env);
 
 void	*code(void *arg);
 void	*monitor(void *arg);

@@ -6,20 +6,20 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:46:42 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/07 08:52:04 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/07 17:04:06 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/codexion.h"
 
-void	poll_queues(int q1, int q2, pthread_mutex_t *q_locks, t_queue *queues)
+void	poll_queue(t_arg *g_env)
 {
-	pthread_mutex_lock(&q_locks[q1]);
-	poll(&queues[q1]);
-	pthread_mutex_unlock(&q_locks[q1]);
-	pthread_mutex_lock(&q_locks[q2]);
-	poll(&queues[q2]);
-	pthread_mutex_unlock(&q_locks[q2]);
+	t_coder	*coder;
+
+	pthread_mutex_lock(g_env->q_lock);
+	coder = poll(&g_env->queue);
+	insert(&g_env->queue, coder);
+	pthread_mutex_unlock(g_env->q_lock);
 }
 
 void	print_state(char *state, t_arg *g_env, t_coder *c)
@@ -49,10 +49,9 @@ void	print_state(char *state, t_arg *g_env, t_coder *c)
 	pthread_mutex_unlock(g_env->output);
 }
 
-void	insert_queue(t_coder *coder,
-	pthread_mutex_t *q_locks, t_queue *queues, int q)
+void	insert_queue(t_coder *coder, t_arg *g_env)
 {
-	pthread_mutex_lock(&q_locks[q]);
-	insert(&queues[q], coder);
-	pthread_mutex_unlock(&q_locks[q]);
+	pthread_mutex_lock(g_env->q_lock);
+	insert(&g_env->queue, coder);
+	pthread_mutex_unlock(g_env->q_lock);
 }

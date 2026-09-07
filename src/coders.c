@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:38:43 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/07 10:17:00 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/07 17:03:25 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ void	*compile(t_coder *coder, t_arg *g_env, int q1, int q2)
 	print_state("is compiling", g_env, coder);
 	compile_time = atoi(g_env->argv[3]);
 	usleep(compile_time * 1000);
-	poll_queues(q1, q2, g_env->q_locks, g_env->queues);
 	coder->comp_num++;
 	gettimeofday(&now, NULL);
 	coder->last_comp = ((size_t) now.tv_sec) * 1000000 + now.tv_usec;
@@ -57,54 +56,22 @@ void	*compile(t_coder *coder, t_arg *g_env, int q1, int q2)
 	return (debug_and_refactor(coder, g_env), NULL);
 }
 
-int	cooldown(int q1, int q2, t_arg *g_env)
-{
-	size_t			now;
-	t_time			time;
-
-	gettimeofday(&time, NULL);
-	now = ((size_t) time.tv_sec) * 1000000 + time.tv_usec;
-	return (now > g_env->don_cd[q1] && now > g_env->don_cd[q2]);
-}
-
-void	determine_dongles(int *q1, int *q2, t_coder *coder, t_arg *g_env)
-{
-	if (coder->cid % 2 == 0)
-	{
-		*q1 = coder->cid;
-		*q2 = (coder->cid + 1) % atoi(g_env->argv[1]);
-	}
-	else
-	{
-		*q1 = (coder->cid + 1) % atoi(g_env->argv[1]);
-		*q2 = coder->cid;
-	}
-}
-
 void	*code(void *arg)
 {
-	int				q1;
-	int				q2;
 	t_arg			*g_env;
 	t_coder			*coder;
 
 	g_env = ((t_code_arg *) arg)->g_env;
 	coder = ((t_code_arg *) arg)->coder;
-	determine_dongles(&q1, &q2, coder, g_env);
-	insert_queue(coder, g_env->q_locks, g_env->queues, q1);
-	insert_queue(coder, g_env->q_locks, g_env->queues, q2);
+	insert_queue(coder, g_env);
 	while (!g_env->stop)
 	{
-		if (top(g_env, q1) == coder->cid
-			&& top(g_env, q2) == coder->cid && cooldown(q1, q2, g_env)
-			&& g_env->d_avail[q1] && g_env->d_avail[q2])
-		{
-			g_env->d_avail[q1] = 0;
-			g_env->d_avail[q2] = 0;
-			compile(coder, g_env, q1, q2);
-			insert_queue(coder, g_env->q_locks, g_env->queues, q1);
-			insert_queue(coder, g_env->q_locks, g_env->queues, q2);
-		}
+		pthread_mutex_lock(&g_env->coders_exec[coder->cid]);
+		pthread_cond_wait(&g_env->acq_dong[coder->cid],
+			&g_env->coders_exec[coder->cid]);
+		compile(coder, g_env, coder->q1, coder->q2);
+		insert_queue(coder, g_env);
+		pthread_mutex_unlock(&g_env->coders_exec[coder->cid]);
 	}
 	return ((void *) NULL);
 }
