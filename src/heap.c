@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/24 14:07:04 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/07 08:51:46 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/08 13:55:24 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ void	insert(t_queue *q, t_coder *elem)
 {
 	int		current;
 	void	*temp;
-	t_time	time;
 
 	if (q->len == q->limit || !q || !elem)
 		return ;
@@ -39,8 +38,6 @@ void	insert(t_queue *q, t_coder *elem)
 			return ;
 	current = q->len;
 	q->array[current] = elem;
-	gettimeofday(&time, NULL);
-	elem->arv_time = (size_t) time.tv_sec * 1000000 + time.tv_usec;
 	while (current != 0
 		&& pr(q->array[parent(current)]) > pr(q->array[current]))
 	{
@@ -64,9 +61,9 @@ void	heapify_down(t_queue *q, int current)
 	{
 		left = left_c(smallest);
 		right = right_c(smallest);
-		if (left < q->len && pr(q->array[left]) < pr(q->array[current]))
+		if (left < q->len && pr(q->array[left]) < pr(q->array[smallest]))
 			smallest = left;
-		if (right < q->len && pr(q->array[right]) < pr(q->array[current]))
+		if (right < q->len && pr(q->array[right]) < pr(q->array[smallest]))
 			smallest = right;
 		if (smallest != current)
 		{
@@ -88,26 +85,25 @@ t_coder	*poll(t_queue *q)
 		return (NULL);
 	result = q->array[0];
 	q->array[0] = q->array[q->len - 1];
-	q->array[q->len-- - 1] = NULL;
+	q->array[q->len - 1] = NULL;
+	q->len--;
 	heapify_down(q, 0);
 	return (result);
 }
 
-/*
-void print_q(t_queue *q)
-{
-	int	i;
+// void print_q(t_queue *q)
+// {
+// 	int	i;
 
-	i = 0;
-	if (q->len == 0)
-		printf("empty\n");
-	while (i < q->len - 1)
-	{
-		if (q->array[i])
-			printf("%d<-", q->array[i]->cid + 1);
-		i++;
-	}
-	if (q->array[i])
-		printf("%d\n", q->array[i]->cid + 1);
-}
-*/
+// 	i = 0;
+// 	if (q->len == 0)
+// 		printf("empty\n");
+// 	while (i < q->len - 1)
+// 	{
+// 		if (q->array[i])
+// 			printf("%d<-", q->array[i]->cid + 1);
+// 		i++;
+// 	}
+// 	if (q->array[i])
+// 		printf("%d\n", q->array[i]->cid + 1);
+// }

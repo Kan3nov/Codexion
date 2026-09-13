@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:47:36 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/07 17:10:05 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/08 14:05:22 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,12 @@ void	free_all(t_arg *g_env, t_code_arg **c_args, int coder_num,
 		pthread_mutex_destroy(&(g_env->dongles[coder_num]));
 		pthread_cond_destroy(&(g_env->acq_dong[coder_num]));
 		pthread_mutex_destroy(&(g_env->coders_exec[coder_num]));
-		free(g_env->queues[coder_num].array);
 		free(g_env->coders[coder_num]);
 		free(c_args[coder_num]);
 	}
 	pthread_mutex_destroy(g_env->output);
 	pthread_mutex_destroy(g_env->q_lock);
+	pthread_mutexattr_destroy(g_env->attr);
 	free(g_env->output);
 	free(g_env->coders_exec);
 	free(g_env->acq_dong);
@@ -87,7 +87,6 @@ int	mem_alloc(t_arg **g_env, int coder_num)
 	if (!*g_env || !dongles || !q_lock || !output
 		|| !dongles_cooldown || !d_avail)
 		return (1);
-	pthread_mutex_init(q_lock, NULL);
 	(*g_env)->dongles = dongles;
 	(*g_env)->output = output;
 	(*g_env)->q_lock = q_lock;
@@ -99,16 +98,22 @@ int	mem_alloc(t_arg **g_env, int coder_num)
 
 int	mem_alloc2(t_arg **g_env, int coder_num)
 {
-	pthread_cond_t	*acq_dong;
-	pthread_mutex_t	*coders_exec;
+	pthread_cond_t		*acq_dong;
+	pthread_mutex_t		*coders_exec;
+	pthread_mutexattr_t	attr;
 
+	pthread_mutexattr_init(&attr);
+	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+	(*g_env)->attr = &attr;
+	pthread_mutex_init((*g_env)->q_lock, &attr);
 	acq_dong = malloc(sizeof(pthread_cond_t) * coder_num);
 	coders_exec = malloc(sizeof(pthread_mutex_t) * coder_num);
 	while (--coder_num >= 0)
 		pthread_mutex_init(&coders_exec[coder_num], NULL);
-	if (!acq_dong)
+	if (!acq_dong || !acq_dong)
 		return (1);
 	(*g_env)->acq_dong = acq_dong;
+	(*g_env)->coders_exec = coders_exec;
 	return (0);
 }
 
@@ -125,4 +130,3 @@ void	determine_dongles(t_coder *coder, t_arg *g_env)
 		coder->q2 = coder->cid;
 	}
 }
-

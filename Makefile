@@ -10,7 +10,8 @@ SRCS = main.c \
 	mutex_access.c \
 	monitor.c \
 	heap_helper.c \
-	utility.c
+	utility.c \
+	utility2.c
 
 OBJS := $(SRCS:%.c=%.o)
 

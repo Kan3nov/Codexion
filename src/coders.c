@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:38:43 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/07 17:03:25 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/08 13:22:43 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,17 +60,25 @@ void	*code(void *arg)
 {
 	t_arg			*g_env;
 	t_coder			*coder;
+	t_time			time;
 
 	g_env = ((t_code_arg *) arg)->g_env;
 	coder = ((t_code_arg *) arg)->coder;
+	gettimeofday(&time, NULL);
+	coder->arv_time = (size_t) time.tv_sec * 1000000 + time.tv_usec;
 	insert_queue(coder, g_env);
 	while (!g_env->stop)
 	{
 		pthread_mutex_lock(&g_env->coders_exec[coder->cid]);
 		pthread_cond_wait(&g_env->acq_dong[coder->cid],
 			&g_env->coders_exec[coder->cid]);
-		compile(coder, g_env, coder->q1, coder->q2);
-		insert_queue(coder, g_env);
+		if (!g_env->stop)
+		{
+			compile(coder, g_env, coder->q1, coder->q2);
+			gettimeofday(&time, NULL);
+			coder->arv_time = (size_t) time.tv_sec * 1000000 + time.tv_usec;
+			insert_queue(coder, g_env);
+		}
 		pthread_mutex_unlock(&g_env->coders_exec[coder->cid]);
 	}
 	return ((void *) NULL);

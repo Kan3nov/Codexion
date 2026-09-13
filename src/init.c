@@ -6,7 +6,7 @@
 /*   By: klafi <klafi@learner.42.tech>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/29 10:44:19 by klafi             #+#    #+#             */
-/*   Updated: 2026/09/07 16:02:47 by klafi            ###   ########.fr       */
+/*   Updated: 2026/09/08 13:57:55 by klafi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ int	coders_init(int coder_num, t_arg *g_env, t_coder **coders)
 
 int	queue_init(t_arg *g_env, int coder_num)
 {
-	int	i;
-	t_queue q;
+	int		i;
+	t_queue	q;
 
 	i = 0;
 	q.array = malloc(sizeof(t_coder *) * coder_num);
